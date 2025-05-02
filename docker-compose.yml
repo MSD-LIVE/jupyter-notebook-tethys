@@ -2,11 +2,11 @@
 # for testing.
 services:
   notebook:
-    container_name: <<blank>>-notebook
+    container_name: jupyter-notebook-tethys-notebook
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/msd-live/jupyter/<<blank>>-notebook:latest
+    image: ghcr.io/msd-live/jupyter/jupyter-notebook-tethys-notebook:latest
     ports:
       - "8888:8888"
     volumes:
