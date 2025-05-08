@@ -9,6 +9,7 @@ services:
     image: ghcr.io/msd-live/jupyter/jupyter-notebook-tethys-notebook:latest
     ports:
       - "8888:8888"
+      - "46321:46321"
     volumes:
       - ./data:/home/jovyan/data
       - ./data:/data
