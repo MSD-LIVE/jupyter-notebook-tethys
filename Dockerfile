@@ -1,4 +1,4 @@
-FROM ghcr.io/msd-live/jupyter/python-notebook:latest as builder
+FROM ghcr.io/msd-live/jupyter/datascience-notebook:latest as builder
 
 FROM builder AS tethys
 RUN git clone https://github.com/JGCRI/gcamreader.git /usr/local/gcamreader
