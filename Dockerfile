@@ -9,7 +9,7 @@ RUN git clone --branch source-disagg https://github.com/JGCRI/tethys.git /usr/lo
 RUN cd /usr/local/tethys && sed -i 's/gcamreader>=1.2.5/gcamreader>=1.4.0/g' setup.py \
     && sed -i 's/gcamreader>=1.2.5/gcamreader>=1.4.0/g' requirements.txt 
 RUN pip3 install -e /usr/local/tethys
-RUN pip3 install --force-reinstall xarray==2024.5.0
+RUN pip3 install --force-reinstall "xarray>=2024.5.0"
 RUN pip3 install --force-reinstall numpy==1.26.4
 RUN apt-get -y update && apt-get install -y openjdk-11-jdk-headless openjdk-11-jre-headless
 COPY notebooks /home/jovyan/notebooks
