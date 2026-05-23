@@ -1,12 +1,30 @@
 # MSD-LIVE jupyter-notebook-tethys Notebook
 
-This repo contains the Dockerfile to build the notebook image as well as the notebooks
-used in the MSD-LIVE deployment. It will rebuild the image whenever changes are pushed to the main and dev branches.
+This repo contains the Dockerfile to build the notebook image as well as the notebooks used in the MSD-LIVE deployment for running [Tethys](https://github.com/JGCRI/tethys). 
 
-**The data folder is too big, so we are not checking this into github. You will have
-to pull from s3 (instructions below) if you want to test locally**
+Tethys downscales region-scale water demand data (e.g. from GCAM) to finer spatial and temporal resolutions.
 
-## Initalizing this project notebook repository:
+- [tethys.msdlive.org](https://tethys.msdlive.org) for the main branch and public access
+- [tethys.dev.msdlive.org](https://tethys.dev.msdlive.org) for the dev branch for testing
+
+The image is rebuilt automatically whenever changes are pushed to the main or dev branches.
+
+**The data folder is too big**, so we are not checking this into github. You will have to pull from s3 (instructions below) if you want to test locally.
+
+- [tethys_example.ipynb](./notebooks/tethys_example.ipynb) — main pre-run tutorial: imports, example data setup, running Tethys with CSV and GCAM database inputs, plotting results, interactive input viewing, and Dask dashboard integration.
+- [tethys_clean.ipynb](./notebooks/tethys_clean.ipynb) — not pre run 
+
+**Contact**: hassan.niazi@pnnl.gov with any questions or issues.
+
+## Dependencies
+
+The Dockerfile installs:
+- [tethys](https://github.com/JGCRI/tethys) (source-disagg branch)
+- [gcamreader](https://github.com/JGCRI/gcamreader)
+- OpenJDK 11 (required by BaseX / gcamreader)
+- xarray, numpy, dask, matplotlib (pinned versions for compatibility)
+
+<!-- ## Initalizing this project notebook repository:
 1. Create a new git repo
    1. Repo must be in the MSD-LIVE git org
    1. Select the [template-project-jupyter-notebook](https://github.com/MSD-LIVE/template-project-jupyter-notebook) as the repository template
@@ -17,7 +35,7 @@ to pull from s3 (instructions below) if you want to test locally**
    1. After the repo has been created from the github UI go to Settings, from left click on Secrets and variables and select Actions
    1. Click on the Variables tab, click the green New repository variable button
    1. For Name enter `PROJECT` and value should be a project in MSD-LIVE like IM3 or GCIMS (the notebook will fail to launch from MSD-LIVE's services if not set)
-1. You may need to modify the `.gitignore` if your notebooks include config files or images.
+1. You may need to modify the `.gitignore` if your notebooks include config files or images. -->
 
 
 ## Developing the project notebook container:
@@ -64,7 +82,6 @@ Here are some ways to add specific behaviors for notebook containers. Note these
 
 
 
-
 ## Testing the notebook locally
 
 1. Get the data (requires .aws/credentials to be set or use of aws access tokens [see next section on how to get and use])
@@ -85,22 +102,13 @@ Here are some ways to add specific behaviors for notebook containers. Note these
    ```
 
 
+## Deploying to MSD-LIVE
 
+1. An MSD-LIVE developer adds this notebook via [the steps here](https://github.com/MSD-LIVE/jupyter-stacks/blob/main/MASTER_README.md).
+1. Upload data to the S3 bucket (folder must be named `data`). Data syncs to `/data` in the container — may take up to 1 hour.
+1. Ensure the [package visibility](https://github.com/orgs/MSD-LIVE/packages) is set to **public**.
 
-## Adding this Project Notebook to MSD-LIVE's Notebook Services:
-1. An MSD-LIVE developer will have to follow [the steps here](https://github.com/MSD-LIVE/jupyter-stacks/blob/main/MASTER_README.md) to add this as a new project notebook deployment (optionally to dev) in the prod config file. 
-1. Once added, there will be an s3 bucket that this notebook's input data will need to be uploaded to. The folder uploaded to the bucket must be named 'data'. 
-1. Data in the s3 bucket gets populated in one of these ways:
-   1. Send the data or a link to an MSD-LIVE developer who can use the aws s3 console to upload to the bucket
-   1. An MSD-LIVE developer can create aws tokens for the IAM user created when adding this project notebook deployment and securely send those tokens to the data owner to use to upload to the bucket. Links to AWS’s CLI documentation that will be helpful:
-      -	How to use the access key: Authenticating using IAM user credentials for the AWS CLI - AWS Command Line Interface https://docs.aws.amazon.com/cli/latest/userguide/cli-authentication-user.html#cli-authentication-user-configure.title
-      o	Enter us-west-2 for default region name
-      -	How to upload files: Using high-level (s3) commands in the AWS CLI - AWS Command Line Interface https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html#using-s3-commands-managing-objects-sync
-      -	How to delete files (or use the sync command with --delete as shown in previous link): Using high-level (s3) commands in the AWS CLI - AWS Command Line Interface https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html#using-s3-commands-delete-objects
-1. Note: it may take up to 1 hour for the data to be avilalbe to the notebook. Optionally, an MSD-LIVE developer can manually trigger the project deployment's datasync task to run right away.
+## Testing on dev
 
-## Testing the notebook on dev 
-1. Dev project notebooks deployments are only availble internally to the PNNL domain. If not on site at PNNL you must be on the PNNL / Legacy PNNL VPN
-1. When logging in to the notebook you must use credentials of a user registered to the DEV msdlive site (msdlive.dev.org)
-1. Deployment for dev are the same steps as above but changes are made to the dev config file and files uploaded to the dev bucket
-
+1. Requires PNNL VPN access and credentials registered on `msdlive.dev.org`.
+1. Changes go to the dev config file and dev S3 bucket.
